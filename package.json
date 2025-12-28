@@ -1,0 +1,86 @@
+{
+  "name": "laonote",
+  "version": "1.0.0",
+  "description": "LaoNote编辑器",
+  "author": "Kogar",
+  "type": "module",
+  "main": "electron/mainProcess.ts",
+  "scripts": {
+    "dev": "vite",
+    "build-only": "vite build",
+    "type-check": "vue-tsc --build",
+    "lint": "run-s lint:*",
+    "lint:oxlint": "oxlint . --fix",
+    "lint:eslint": "eslint . --fix --cache",
+    "format": "prettier --write --experimental-cli src/",
+    "clean": "rimraf release dist"
+  },
+  "build": {
+    "appId": "com.kogar.laonote",
+    "productName": "LaoNote编辑器",
+    "icon": "dist/icon/icon.ico",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "dist/**/*",
+      "data/**/*",
+      "electron/**/*",
+      "!**/*.{map,md,d.ts}",
+      "!**/node_modules/**/{README,readme,CHANGELOG,changelog,.*}",
+      "!**/node_modules/**/{test,__tests__,tests,powered-test,example,examples}",
+      "!**/node_modules/**/*.d.ts",
+      "!**/node_modules/**/{package-lock.json,yarn.lock,.npmignore,.gitignore}"
+    ],
+    "asar": true,
+    "win": {
+      "target": "nsis",
+      "signAndEditExecutable": false
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "installerIcon": "public/icon/icon.ico"
+    },
+    "compression": "maximum"
+  },
+  "dependencies": {
+    "pinia": "^3.0.4",
+    "vue": "^3.5.26",
+    "vue-router": "^4.6.4",
+    "@element-plus/icons-vue": "^2.3.2",
+    "electron-store": "^10.1.0",
+    "element-plus": "^2.10.4",
+    "lodash": "^4.17.21",
+    "lowdb": "^7.0.1"
+  },
+  "devDependencies": {
+    "@tsconfig/node24": "^24.0.3",
+    "@types/jsdom": "^27.0.0",
+    "@types/node": "^24.10.4",
+    "@vitejs/plugin-vue": "^6.0.3",
+    "@vitejs/plugin-vue-jsx": "^5.1.3",
+    "@vitest/eslint-plugin": "^1.6.4",
+    "@vue/eslint-config-prettier": "^10.2.0",
+    "@vue/eslint-config-typescript": "^14.6.0",
+    "@vue/test-utils": "^2.4.6",
+    "@vue/tsconfig": "^0.8.1",
+    "electron": "^39.2.7",
+    "eslint": "^9.39.2",
+    "eslint-plugin-oxlint": "~1.35.0",
+    "eslint-plugin-vue": "~10.6.2",
+    "jiti": "^2.6.1",
+    "jsdom": "^27.3.0",
+    "npm-run-all2": "^8.0.4",
+    "oxlint": "~1.35.0",
+    "prettier": "3.7.4",
+    "typescript": "~5.9.3",
+    "vite": "^7.3.0",
+    "vite-plugin-vue-devtools": "^8.0.5",
+    "vitest": "^4.0.16",
+    "vue-tsc": "^3.2.1",
+    "cross-env": "^10.0.0",
+    "electron-builder": "^26.0.12",
+    "rimraf": "^6.0.1"
+  }
+}
