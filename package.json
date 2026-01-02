@@ -6,7 +6,8 @@
   "type": "module",
   "main": "electron/mainProcess.ts",
   "scripts": {
-    "dev": "vite",
+    "serve": "vite",
+    "dev": "cross-env NODE_ENV=development electron electron/mainProcess.ts",
     "build-only": "vite build",
     "type-check": "vue-tsc --build",
     "lint": "run-s lint:*",
@@ -45,14 +46,14 @@
     "compression": "maximum"
   },
   "dependencies": {
-    "pinia": "^3.0.4",
-    "vue": "^3.5.26",
-    "vue-router": "^4.6.4",
     "@element-plus/icons-vue": "^2.3.2",
     "electron-store": "^10.1.0",
     "element-plus": "^2.10.4",
     "lodash": "^4.17.21",
-    "lowdb": "^7.0.1"
+    "lowdb": "^7.0.1",
+    "pinia": "^3.0.4",
+    "vue": "^3.5.26",
+    "vue-router": "^4.6.4"
   },
   "devDependencies": {
     "@tsconfig/node24": "^24.0.3",
@@ -65,7 +66,9 @@
     "@vue/eslint-config-typescript": "^14.6.0",
     "@vue/test-utils": "^2.4.6",
     "@vue/tsconfig": "^0.8.1",
+    "cross-env": "^10.0.0",
     "electron": "^39.2.7",
+    "electron-builder": "^26.0.12",
     "eslint": "^9.39.2",
     "eslint-plugin-oxlint": "~1.35.0",
     "eslint-plugin-vue": "~10.6.2",
@@ -74,13 +77,13 @@
     "npm-run-all2": "^8.0.4",
     "oxlint": "~1.35.0",
     "prettier": "3.7.4",
+    "rimraf": "^6.0.1",
+    "sass-embedded": "^1.97.1",
+    "ts-node": "^10.9.2",
     "typescript": "~5.9.3",
     "vite": "^7.3.0",
     "vite-plugin-vue-devtools": "^8.0.5",
     "vitest": "^4.0.16",
-    "vue-tsc": "^3.2.1",
-    "cross-env": "^10.0.0",
-    "electron-builder": "^26.0.12",
-    "rimraf": "^6.0.1"
+    "vue-tsc": "^3.2.1"
   }
 }

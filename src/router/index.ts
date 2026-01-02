@@ -1,8 +1,35 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
 
+const routes:RouteRecordRaw[] = [
+  {
+    path: '/',
+    name: 'home',
+    component: () => import("../components/basicView/Home.vue"),
+  },
+  // {
+  //   path: '/tools',
+  //   name: 'tools',
+  //   component: () => import('../components/tools/Tools.vue'),
+  // },
+  // {
+  //   path: '/edit/:id',
+  //   name: 'edit',
+  //   component: () => import('../components/editAndShow/Edit.vue'),
+  // },
+  // {
+  //   path: '/settings',
+  //   name: 'settings',
+  //   component: () => import('../components/setting/Settingdialog.vue'),
+  // },
+  // {
+  //   path: '/showNote/:id',
+  //   name: 'showNote',
+  //   props: true,
+  //   component: () => import('../components/editAndShow/showForm.vue'),
+  // },
+]
 const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
-  routes: [],
+  history: createWebHistory(),
+  routes,
 })
-
 export default router

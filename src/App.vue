@@ -1,11 +1,27 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import AsideMenu from '@/components/basicView/AsideMenu.vue'
+import Header from '@/components/basicView/Header.vue'
+</script>
 
 <template>
-  <h1>You did it!</h1>
-  <p>
-    Visit <a href="https://vuejs.org/" target="_blank" rel="noopener">vuejs.org</a> to read the
-    documentation
-  </p>
+  <el-container>
+    <el-header class="header">
+      <Header />
+    </el-header>
+    <el-container class="el-mainContainer">
+      <AsideMenu />
+      <router-view/>
+    </el-container>
+  </el-container>
 </template>
 
-<style scoped></style>
+<style scoped lang="scss">
+.header {
+  padding: 0;
+  height: 50px;
+}
+
+.el-mainContainer {
+  width: 100vw;
+}
+</style>
