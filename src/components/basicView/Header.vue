@@ -1,31 +1,23 @@
 <script lang="ts" setup>
 import { CloseBold, FullScreen, SemiSelect } from '@element-plus/icons-vue'
-import type { WindowAPI } from '@/window.ts'
-import jsonDbToolClass from '../../../data/dbClass/notesClass.ts'
-import { onMounted } from 'vue'
+import type { ElectronAPI } from '@/windowApi.ts'
+
 
 declare const window: Window & {
-  windowApi: WindowAPI
+  electronApi: ElectronAPI
 }
-
 type clickType = 'miniWindow' | 'toggleScreen' | 'closeWindow'
 const handleWindow: Record<clickType, () => Promise<void>> = {
   miniWindow: async () => {
-    await window.windowApi.miniWindow()
+    await window.electronApi.miniWindow()
   },
   toggleScreen: async () => {
-    await window.windowApi.toggleScreen()
+    await window.electronApi.toggleScreen()
   },
   closeWindow: async () => {
-    await window.windowApi.closeWindow()
+    await window.electronApi.closeWindow()
   },
 }
-async function awa(){
-  console.log(await window.windowApi.getNotes())
-}
-onMounted(async () => {
-  await awa();
-})
 </script>
 
 <template>
@@ -45,7 +37,6 @@ onMounted(async () => {
         active-text-color="#1f2024"
         background-color="5881A39B"
         :ellipsis="false"
-
       >
         <el-menu-item index="home" route="/"> 首页 </el-menu-item>
         <el-menu-item index="tools" route="/tools"> 工具 </el-menu-item>

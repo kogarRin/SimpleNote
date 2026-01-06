@@ -2,7 +2,6 @@
 import AsideMenu from '@/components/basicView/AsideMenu.vue'
 import Header from '@/components/basicView/Header.vue'
 </script>
-
 <template>
   <el-container>
     <el-header class="header">
@@ -10,7 +9,7 @@ import Header from '@/components/basicView/Header.vue'
     </el-header>
     <el-container class="el-mainContainer">
       <AsideMenu />
-      <router-view/>
+      <router-view />
     </el-container>
   </el-container>
 </template>

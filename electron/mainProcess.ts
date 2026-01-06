@@ -2,14 +2,14 @@ import { app, BrowserWindow, ipcMain } from 'electron'
 import * as path from 'node:path'
 import { fileURLToPath } from 'url'
 import { jsonDbToolClass } from '../data/dbClass/notesClass.ts'
+import { addNote, getNotesFromDb } from '../data/api/dbAPI.ts'
 
-const jsonToolInMain = new jsonDbToolClass()
+
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-console.log(__filename, __dirname)
-let win: BrowserWindow | null = null;
-
-
+const jsonToolInMain = new jsonDbToolClass();
+let win: BrowserWindow;
 
 
 function createWindow():void {
@@ -45,7 +45,7 @@ app.on("window-all-closed", ()=>{
 
 
 ipcMain.handle('mini-window', () => {
-  win.minimize()
+  win.minimize();
 });
 
 ipcMain.handle('toggle-screen',  () => {
@@ -56,7 +56,10 @@ ipcMain.handle('close-window',  () => {
   win.close();
 });
 
-ipcMain.handle('get-notes',async () => {
-  console.log(await jsonToolInMain.loadJsonDb())
-  return await  jsonToolInMain.loadJsonDb()
+ipcMain.handle('get-notes',  async ()=> {
+  return await getNotesFromDb();
+});
+
+ipcMain.handle('add-notes', async () => {
+  await addNote();
 })

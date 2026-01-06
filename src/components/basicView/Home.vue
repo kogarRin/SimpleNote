@@ -1,13 +1,60 @@
 <script setup lang="ts">
-import { computed, onMounted } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { Delete, Refresh, Search } from '@element-plus/icons-vue'
+import type { Note } from '@/ts/class/noteClass.ts'
+import { ElMessage } from 'element-plus'
+import { ElmessageConfig } from '../../../oth/ui.ts'
+import type { ElectronAPI } from '@/windowApi.ts'
+import NoteList from '@/components/main/NoteList.vue'
+
+declare const window: Window & {
+  electronApi: ElectronAPI
+}
+const baseData = ref<Note[]>([])
+const noticeListenerDelete = ref(false)
+const isEditorModal = ref(false)
+const selectedNoteIdList = ref([])
+const checkAll = ref(false)
+const searchInputContent = ref('')
+
+async function initNotes(model: number) {
+  try {
+    if (model === 1) {
+      const res = await window.electronApi.getNotes();
+      baseData.value = res.data.noteList;
+      if (res.code === 200) {
+        ElMessage(ElmessageConfig(`加载成功`, 'success', 1000, true))
+        return baseData.value;
+      }
+      ElMessage(ElmessageConfig(`加载失败`, 'error', 1000, true))
+    }
+    if (model === 2) {
+      const res = await window.electronApi.getNotes();
+      baseData.value = res.data.noteList
+      if (res.code === 200) {
+        ElMessage(ElmessageConfig(`刷新成功`, 'success', 1000, true))
+        return baseData.value;
+      }
+    }
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+async function refreshNoteList() {
+  await initNotes(2)
+}
+
+async function addOneNote() {
+  await window.electronApi.addNotes();
+  const res = await window.electronApi.getNotes();
+  baseData.value = res.data.noteList;
+  ElMessage(ElmessageConfig(`添加成功`, 'success', 1000, true));
+}
 
 onMounted(async () => {
-  await initNotes()
-  await initGlobalTags()
+  await initNotes(1)
 })
-
-const visibleList = computed(() => (isSearchMode.value ? searchResult.value : notesFromDb.value))
 </script>
 
 <template>
@@ -91,7 +138,16 @@ const visibleList = computed(() => (isSearchMode.value ? searchResult.value : no
             </el-button>
           </div>
           <div class="item">
-            <el-button id="refreshIcon" @click="refreshBtuClick()" :disabled="isEditorModal" circle>
+            <el-button
+              id="refreshIcon"
+              @click="
+                async () => {
+                  await refreshNoteList()
+                }
+              "
+              :disabled="isEditorModal"
+              circle
+            >
               <el-icon>
                 <Refresh />
               </el-icon>
@@ -104,7 +160,7 @@ const visibleList = computed(() => (isSearchMode.value ? searchResult.value : no
       <el-checkbox v-if="isEditorModal" v-model="checkAll" />
       <el-divider direction="horizontal" style="margin: 0" />
     </div>
-    <noteList />
+    <NoteList ref="childNoteList" :noteList="baseData" />
   </div>
 </template>
 
