@@ -16,11 +16,11 @@ const routes: RouteRecordRaw[] = [
   //   name: 'edit',
   //   component: () => import('../components/editAndShow/Edit.vue'),
   // },
-  // {
-  //   path: '/settings',
-  //   name: 'settings',
-  //   component: () => import('../components/setting/Settingdialog.vue'),
-  // },
+  {
+    path: '/settings',
+    name: 'settings',
+    component: () => import('../components/main/Setting.vue'),
+  },
   // {
   //   path: '/showNote/:id',
   //   name: 'showNote',

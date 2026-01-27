@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import type { ElectronAPI } from '@/windowApi.ts'
-import { onMounted, ref, watch } from 'vue'
+import { ref, watch } from 'vue'
 import type { Note } from '@/ts/class/noteClass.ts'
 
 const selectedIdList = ref<string[]>([])

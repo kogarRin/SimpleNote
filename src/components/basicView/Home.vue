@@ -54,7 +54,7 @@ async function addOneNote() {
 }
 
 function handleSelect(idList: string[]) {
-  selectedIdList.value = idList
+  selectedIdList.value = idList;
 }
 
 
@@ -66,6 +66,7 @@ async function deleteNote() {
   }
   await window.electronApi.deleteNotes(idList);
   ElMessage(ElmessageConfig(`删除成功`, 'success', 1000, true))
+  baseData.value = baseData.value.filter((item) => !idList.includes(item.id))
 }
 
 onMounted(async () => {

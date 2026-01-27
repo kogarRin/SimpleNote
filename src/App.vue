@@ -1,6 +1,14 @@
 <script setup lang="ts">
 import AsideMenu from '@/components/basicView/AsideMenu.vue'
 import Header from '@/components/basicView/Header.vue'
+import { useSettingStore } from '@/stores/setting.ts'
+import { onMounted } from 'vue'
+
+const settingStore = useSettingStore();
+
+onMounted(()=>{
+  settingStore.initTheme();
+})
 </script>
 <template>
   <el-container>

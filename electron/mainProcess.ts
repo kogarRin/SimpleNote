@@ -1,14 +1,12 @@
 import { app, BrowserWindow, ipcMain } from 'electron'
 import * as path from 'node:path'
 import { fileURLToPath } from 'url'
-import { jsonDbToolClass } from '../data/dbClass/notesClass.ts'
 import { addNote, deleteNote, getNotesFromDb } from '../data/api/dbAPI.ts'
-
-
+import Store from 'electron-store';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const jsonToolInMain = new jsonDbToolClass();
+const store = new Store();
 let win: BrowserWindow;
 
 
@@ -43,7 +41,9 @@ app.on("window-all-closed", ()=>{
   }
 });
 
-
+/**
+ * 窗口控制
+ */
 ipcMain.handle('mini-window', () => {
   win.minimize();
 });
@@ -56,6 +56,9 @@ ipcMain.handle('close-window',  () => {
   win.close();
 });
 
+/**
+ * 笔记相关
+ */
 ipcMain.handle('get-notes',  async ()=> {
   return await getNotesFromDb();
 });
@@ -66,5 +69,16 @@ ipcMain.handle('add-notes', async () => {
 
 ipcMain.handle('delete-notes', async (_, idList: string[]) => {
   await deleteNote(idList)
-  console.log(idList)
-})
+});
+
+/**
+ * 主题设置
+ */
+ipcMain.handle('get-theme', async (_) => {
+  return store.get('theme')
+});
+
+ipcMain.handle('set-theme', async (_,theme: string) => {
+  store.set('theme', theme);
+  console.log(store.get('theme'))
+});
