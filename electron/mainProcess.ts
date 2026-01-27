@@ -2,7 +2,7 @@ import { app, BrowserWindow, ipcMain } from 'electron'
 import * as path from 'node:path'
 import { fileURLToPath } from 'url'
 import { jsonDbToolClass } from '../data/dbClass/notesClass.ts'
-import { addNote, getNotesFromDb } from '../data/api/dbAPI.ts'
+import { addNote, deleteNote, getNotesFromDb } from '../data/api/dbAPI.ts'
 
 
 
@@ -62,4 +62,9 @@ ipcMain.handle('get-notes',  async ()=> {
 
 ipcMain.handle('add-notes', async () => {
   await addNote();
+});
+
+ipcMain.handle('delete-notes', async (_, idList: string[]) => {
+  await deleteNote(idList)
+  console.log(idList)
 })

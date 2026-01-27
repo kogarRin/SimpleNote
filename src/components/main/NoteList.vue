@@ -1,20 +1,38 @@
 <script setup lang="ts">
 import type { ElectronAPI } from '@/windowApi.ts'
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import type { Note } from '@/ts/class/noteClass.ts'
 
-
-
-const isEditorModal = ref(false)
-const selectedNoteIdList = ref<string[]>([])
-const isSearchMode = ref(false)
-const searchResult = ref<Note[]>([])
+const selectedIdList = ref<string[]>([])
 const isLoading = ref(false)
 
 const props = defineProps<{
   noteList: Note[]
-}>();
+  isEditorModal: boolean
+}>()
 
+const emits = defineEmits<{
+  select: [idList: string[]]
+}>()
+
+function toEdit(noteId: string) {
+  if (props.isEditorModal) {
+    const index = selectedIdList.value.indexOf(noteId)
+    if (index > -1) {
+      selectedIdList.value.splice(index, 1)
+    } else {
+      selectedIdList.value.push(noteId)
+    }
+  }
+}
+
+watch(
+  selectedIdList,
+  (newVal) => {
+    emits('select', newVal)
+  },
+  { deep: true },
+)
 </script>
 
 <template>
@@ -34,59 +52,62 @@ const props = defineProps<{
       <span>暂无数据</span>
     </div>
     <el-scrollbar>
-      <ul style="padding: 0" v-if="isSearchMode">
+      <ul style="padding: 0" v-if="props.isEditorModal">
         <li
           style="list-style-type: none"
-          v-for="eachNote in searchResult"
+          v-for="eachNote in props.noteList"
           :key="eachNote.id"
           class="contentsList"
         >
-          <el-checkbox
-            v-if="isEditorModal"
-            type="checkbox"
-            :value="eachNote.id"
-            v-model="selectedNoteIdList"
-          />
-          <div class="noteContainer" @click="toEdit(eachNote.id)">
-            <div class="noteInfoContain">
-              <div class="contentTitle">
-                <span>
-                  <b>{{ eachNote.title }}</b>
-                </span>
-              </div>
-              <div class="noteContent">
-                <div>
+          <div style="display: flex; align-items: center; width: 100%">
+            <el-checkbox
+              v-if="props.isEditorModal"
+              type="checkbox"
+              v-model="selectedIdList"
+              :value="eachNote.id"
+              @click.stop
+            />
+            <div class="noteContainer" @click="toEdit(eachNote.id)">
+              <div class="noteInfoContain">
+                <div class="contentTitle">
                   <span>
-                    {{
-                      eachNote.content
-                        ? `${eachNote.content.trim().slice(0, 32)}......`
-                        : '暂无内容'
-                    }}
+                    <b>{{ eachNote.title }}</b>
                   </span>
                 </div>
-                <div>
-                  <!--                  <el-tag-->
-                  <!--                    v-for="tag in eachNote.tags.length > 6-->
-                  <!--                      ? eachNote.tags.slice(0, 6)-->
-                  <!--                      : eachNote.tags"-->
-                  <!--                    style="margin: 0 5px"-->
-                  <!--                  >-->
-                  <!--                    {{ eachNote.tags.length < 6 ? tag : tag + '...' }}-->
-                  <!--                  </el-tag>-->
+                <div class="noteContent">
+                  <div>
+                    <span>
+                      {{
+                        eachNote.content
+                          ? `${eachNote.content.trim().slice(0, 32)}......`
+                          : '暂无内容'
+                      }}
+                    </span>
+                  </div>
+                  <div>
+                    <!--                  <el-tag-->
+                    <!--                    v-for="tag in eachNote.tags.length > 6-->
+                    <!--                      ? eachNote.tags.slice(0, 6)-->
+                    <!--                      : eachNote.tags"-->
+                    <!--                    style="margin: 0 5px"-->
+                    <!--                  >-->
+                    <!--                    {{ eachNote.tags.length < 6 ? tag : tag + '...' }}-->
+                    <!--                  </el-tag>-->
+                  </div>
                 </div>
-              </div>
-              <div class="detailInfo">
-                <div>
-                  <span
-                    >共<span style="padding: 0 0.2em">{{
-                      eachNote.content ? eachNote.content.trim().length : 0
-                    }}</span
-                    >字</span
-                  >
-                </div>
-                <div>
-                  <span>创建于</span>
-                  <span>{{}}</span>
+                <div class="detailInfo">
+                  <div>
+                    <span
+                      >共<span style="padding: 0 0.2em">{{
+                        eachNote.content ? eachNote.content.trim().length : 0
+                      }}</span
+                      >字</span
+                    >
+                  </div>
+                  <div>
+                    <span>创建于</span>
+                    <span>{{}}</span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -101,10 +122,10 @@ const props = defineProps<{
           class="contentsList"
         >
           <el-checkbox
-            v-if="isEditorModal"
+            v-if="props.isEditorModal"
             type="checkbox"
+            v-model="selectedIdList"
             :value="eachNote.id"
-            v-model="selectedNoteIdList"
           />
           <div class="noteContainer" @click="toEdit(eachNote.id)">
             <div class="noteInfoContain">

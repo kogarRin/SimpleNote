@@ -12,5 +12,6 @@ export interface ElectronAPI {
 
   getNotes(): Promise<Res<DbRes>>
   addNotes(): Promise<null>
+  deleteNotes(idArray: string[]): Promise<null>
 }
 

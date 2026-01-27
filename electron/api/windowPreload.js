@@ -5,8 +5,10 @@ contextBridge.exposeInMainWorld('electronApi', {
   miniWindow: () => ipcRenderer.invoke('mini-window'),
   toggleScreen: () => ipcRenderer.invoke('toggle-screen'),
   closeWindow: () => ipcRenderer.invoke('close-window'),
+
   getNotes: () => ipcRenderer.invoke('get-notes'),
   addNotes: () => ipcRenderer.invoke('add-notes'),
+  deleteNotes: (idList) => ipcRenderer.invoke('delete-notes',idList),
 })
 
 console.log('preload.js loaded');

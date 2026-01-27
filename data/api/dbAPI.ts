@@ -1,6 +1,6 @@
 import { jsonDbToolClass } from '../dbClass/notesClass.ts'
 import type { DbRes } from '../../src/ts/class/noteClass.ts'
-import { Res } from '../../oth/res.ts'
+import { Res, RESCODE } from '../../oth/res.ts'
 
 
 
@@ -15,10 +15,10 @@ export async function getNotesFromDb(): Promise<Res<DbRes>> {
     if (Array.isArray(res.noteList)) {
       return new Res(`success`, res);
     }
-    return new Res(`数据文件损坏`, {noteList: []}, 700);
+    return new Res(`数据文件损坏`, {noteList: []}, RESCODE.ERROR);
   } catch (e) {
     console.log(e)
-    return new Res(`error`, { noteList: [] }, 700)
+    return new Res(`error`, { noteList: [] }, RESCODE.ERROR)
   }
 }
 
@@ -31,7 +31,7 @@ export async function addNote(): Promise<Res<null>> {
     return new Res(`添加成功`, null)
   } catch (e) {
     console.log(e)
-    return new Res(`添加失败`, null, 700)
+    return new Res(`添加失败`, null, RESCODE.ERROR)
   }
 }
 
@@ -41,12 +41,12 @@ export async function addNote(): Promise<Res<null>> {
 export async function deleteNote(idList: string[]) {
   try {
     if (!Array.isArray(idList)) {
-      return new Res(`参数错误`, null, 701)
+      return new Res(`参数错误`, null, RESCODE.PARAM_ERROR)
     }
     await dataBase.deleteNoteJson(idList)
     return new Res(`删除成功`, null)
   } catch (e) {
     console.log(e)
-    return new Res(`删除失败,发生错误`, null, 700)
+    return new Res(`删除失败,发生错误`, null, RESCODE.ERROR)
   }
 }

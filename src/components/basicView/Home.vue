@@ -13,43 +13,59 @@ declare const window: Window & {
 const baseData = ref<Note[]>([])
 const noticeListenerDelete = ref(false)
 const isEditorModal = ref(false)
-const selectedNoteIdList = ref([])
+const selectedIdList = ref<string[]>([])
 const checkAll = ref(false)
 const searchInputContent = ref('')
 
 async function initNotes(model: number) {
   try {
     if (model === 1) {
-      const res = await window.electronApi.getNotes();
-      baseData.value = res.data.noteList;
+      const res = await window.electronApi.getNotes()
+      baseData.value = res.data.noteList
       if (res.code === 200) {
         ElMessage(ElmessageConfig(`加载成功`, 'success', 1000, true))
-        return baseData.value;
+        return baseData.value
       }
       ElMessage(ElmessageConfig(`加载失败`, 'error', 1000, true))
     }
     if (model === 2) {
-      const res = await window.electronApi.getNotes();
+      const res = await window.electronApi.getNotes()
       baseData.value = res.data.noteList
       if (res.code === 200) {
         ElMessage(ElmessageConfig(`刷新成功`, 'success', 1000, true))
-        return baseData.value;
+        return baseData.value
       }
     }
   } catch (e) {
-    console.log(e);
+    console.log(e)
   }
 }
 
 async function refreshNoteList() {
-  await initNotes(2)
+  await initNotes(2);
 }
 
 async function addOneNote() {
-  await window.electronApi.addNotes();
-  const res = await window.electronApi.getNotes();
-  baseData.value = res.data.noteList;
-  ElMessage(ElmessageConfig(`添加成功`, 'success', 1000, true));
+  await window.electronApi.addNotes()
+  const res = await window.electronApi.getNotes()
+  baseData.value = res.data.noteList
+  ElMessage(ElmessageConfig(`添加成功`, 'success', 1000, true))
+  return null
+}
+
+function handleSelect(idList: string[]) {
+  selectedIdList.value = idList
+}
+
+
+
+async function deleteNote() {
+  const idList = [...selectedIdList.value]
+  if (idList.length < 1) {
+    ElMessage(ElmessageConfig(`请选择要删除的记录`, 'warning', 1000, true))
+  }
+  await window.electronApi.deleteNotes(idList);
+  ElMessage(ElmessageConfig(`删除成功`, 'success', 1000, true))
 }
 
 onMounted(async () => {
@@ -130,7 +146,7 @@ onMounted(async () => {
               @click="
                 () => {
                   isEditorModal = !isEditorModal
-                  selectedNoteIdList = []
+                  selectedIdList = []
                 }
               "
             >
@@ -160,7 +176,12 @@ onMounted(async () => {
       <el-checkbox v-if="isEditorModal" v-model="checkAll" />
       <el-divider direction="horizontal" style="margin: 0" />
     </div>
-    <NoteList ref="childNoteList" :noteList="baseData" />
+    <NoteList
+      ref="childNoteList"
+      :noteList="baseData"
+      :isEditorModal="isEditorModal"
+      @select="handleSelect"
+    />
   </div>
 </template>
 
