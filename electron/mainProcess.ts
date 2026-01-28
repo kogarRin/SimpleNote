@@ -4,6 +4,7 @@ import { fileURLToPath } from 'url'
 import { addNote, deleteNote, getNotesFromDb } from '../data/api/dbAPI.ts'
 import Store from 'electron-store';
 
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const store = new Store();
@@ -80,5 +81,22 @@ ipcMain.handle('get-theme', async (_) => {
 
 ipcMain.handle('set-theme', async (_,theme: string) => {
   store.set('theme', theme);
-  console.log(store.get('theme'))
 });
+
+ipcMain.handle('get-font', async (_) => {
+  return store.get('font');
+});
+
+ipcMain.handle(
+  'set-font',
+  async (
+    _,
+    font: {
+      name: string
+      en: string
+      family: string
+    },
+  ) => {
+    store.set('font', font)
+  },
+)

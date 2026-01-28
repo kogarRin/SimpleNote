@@ -15,6 +15,8 @@ contextBridge.exposeInMainWorld('electronApi', {
   //主题设置
   getTheme: () => ipcRenderer.invoke('get-theme'),
   setTheme: (theme) => ipcRenderer.invoke('set-theme',theme),
+  getFont: () => ipcRenderer.invoke('get-font'),
+  setFont: (font) => ipcRenderer.invoke('set-font',font),
 })
 
 console.log('preload.js loaded');

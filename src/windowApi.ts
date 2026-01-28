@@ -4,6 +4,7 @@
 
 import type { Res } from '../oth/res.ts'
 import type { DbRes } from '@/ts/class/noteClass.ts'
+import type { FontDesc } from '@/stores/setting.ts'
 
 export interface ElectronAPI {
   miniWindow(): Promise<void>
@@ -16,4 +17,6 @@ export interface ElectronAPI {
 
   getTheme(): Promise<string>
   setTheme(theme: string): Promise<void>
+  getFont(): Promise<FontDesc>;
+  setFont(font: FontDesc): Promise<void>;
 }

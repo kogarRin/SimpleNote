@@ -1,14 +1,10 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
-import { useSettingStore } from '@/stores/setting.ts'
+import { PRE_FONTS, useThemeStore } from '@/stores/setting.ts'
 import { onMounted } from 'vue'
 
-const { isDark } = storeToRefs(useSettingStore());
-const settingStore = useSettingStore();
-
-onMounted(()=>{
-  console.log(isDark.value)
-})
+const { isDark, fontList, appliedFont } = storeToRefs(useThemeStore())
+const settingStore = useThemeStore()
 </script>
 
 <template>
@@ -38,9 +34,11 @@ onMounted(()=>{
                 active-text="开启"
                 inactive-text="关闭"
                 v-model="isDark"
-                @change="()=>{
-                  settingStore.shiftTheme(isDark)
-                }"
+                @change="
+                  () => {
+                    settingStore.shiftTheme(isDark)
+                  }
+                "
               />
             </div>
           </div>
@@ -52,15 +50,15 @@ onMounted(()=>{
             <div>
               <el-select
                 style="width: 160px"
-                v-model="activeEn"
-                :model-value="activeEn"
-                @change="selectFont"
+                v-model="appliedFont"
+                value-key="en"
+                @change="settingStore.selectFont"
               >
                 <el-option
-                  v-for="font in fontsList"
-                  :key="font.en"
+                  v-for="font in PRE_FONTS"
+                  :value="font"
                   :label="font.name"
-                  :value="font.en"
+                  :key="font.family"
                   :style="{ fontFamily: font.family }"
                 >
                 </el-option>
