@@ -5,6 +5,7 @@ import { JSONFile } from 'lowdb/node'
 import { fileURLToPath } from 'url'
 import lodash from 'lodash'
 import type { DbRes, Note } from '@/ts/class/noteClass.ts'
+import moment from 'moment/moment.js'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
@@ -42,16 +43,16 @@ export class jsonDbToolClass {
 
   //增
   async addNoteJson(): Promise<null> {
-    const emptyNoteType = (): Note => ({
+    const emptyNoteType = () => ({
       title: '无标题',
       content: '',
       tags: [],
-      createAt: new Date(),
+      createAt: moment().format('YYYY-M-D'),
       id: this.#setIdPrototype(),
     })
     try {
       await this.jsonDb.read()
-      this.jsonDb.data.noteList.push(emptyNoteType())
+      this.jsonDb.data.noteList.push(emptyNoteType());
       await this.jsonDb.write()
       return null
     } catch (err) {

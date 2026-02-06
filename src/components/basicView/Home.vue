@@ -6,6 +6,7 @@ import { ElMessage } from 'element-plus'
 import { ElmessageConfig } from '../../../oth/ui.ts'
 import type { ElectronAPI } from '@/windowApi.ts'
 import NoteList from '@/components/main/NoteList.vue'
+import { RESCODE } from '../../../oth/res.ts'
 
 declare const window: Window & {
   electronApi: ElectronAPI
@@ -22,7 +23,7 @@ async function initNotes(model: number) {
     if (model === 1) {
       const res = await window.electronApi.getNotes()
       baseData.value = res.data.noteList
-      if (res.code === 200) {
+      if (res.code === RESCODE.SUCCESS) {
         ElMessage(ElmessageConfig(`加载成功`, 'success', 1000, true))
         return baseData.value
       }
@@ -31,7 +32,7 @@ async function initNotes(model: number) {
     if (model === 2) {
       const res = await window.electronApi.getNotes()
       baseData.value = res.data.noteList
-      if (res.code === 200) {
+      if (res.code === RESCODE.SUCCESS) {
         ElMessage(ElmessageConfig(`刷新成功`, 'success', 1000, true))
         return baseData.value
       }
@@ -42,7 +43,7 @@ async function initNotes(model: number) {
 }
 
 async function refreshNoteList() {
-  await initNotes(2);
+  await initNotes(2)
 }
 
 async function addOneNote() {
@@ -54,17 +55,15 @@ async function addOneNote() {
 }
 
 function handleSelect(idList: string[]) {
-  selectedIdList.value = idList;
+  selectedIdList.value = idList
 }
-
-
 
 async function deleteNote() {
   const idList = [...selectedIdList.value]
   if (idList.length < 1) {
     ElMessage(ElmessageConfig(`请选择要删除的记录`, 'warning', 1000, true))
   }
-  await window.electronApi.deleteNotes(idList);
+  await window.electronApi.deleteNotes(idList)
   ElMessage(ElmessageConfig(`删除成功`, 'success', 1000, true))
   baseData.value = baseData.value.filter((item) => !idList.includes(item.id))
 }

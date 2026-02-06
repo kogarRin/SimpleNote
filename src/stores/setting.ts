@@ -26,7 +26,6 @@ export const PRE_FONTS: FontDesc[] = [
 
 export const useThemeStore = defineStore('theme', () => {
   const isDark = ref<boolean>(false)
-  const fontList = ref<FontDesc[]>(PRE_FONTS)
   const appliedFont = ref<FontDesc>({
     name: '微软雅黑（默认）',
     en: 'Microsoft Yahei',

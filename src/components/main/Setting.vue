@@ -1,13 +1,62 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
 import { PRE_FONTS, useThemeStore } from '@/stores/setting.ts'
-import { onMounted } from 'vue'
+import { onMounted, ref } from 'vue'
+import { InfoFilled } from '@element-plus/icons-vue'
+import SettingDialog from '@/components/main/SettingDialog.vue'
+import type { ElectronAPI } from '@/windowApi.ts'
+import type { DbRes } from '@/ts/class/noteClass.ts'
+import { Res, RESCODE } from '../../../oth/res.ts'
+import { ElmessageConfig } from '../../../oth/ui.ts'
+import { ElMessage } from 'element-plus'
 
-const { isDark, fontList, appliedFont } = storeToRefs(useThemeStore())
+declare const window: Window & {
+  electronApi: ElectronAPI
+}
+
+const { isDark, appliedFont } = storeToRefs(useThemeStore())
 const settingStore = useThemeStore()
+const showDesc = ref<boolean>(false)
+const showBrowse = ref<boolean>(false)
+const showEdit = ref<boolean>(false)
+const resData = ref<DbRes>({ noteList: [] })
+
+const handleClose = (type: 'desc' | 'browse' | 'edit') => {
+  if (type === 'desc') showDesc.value = false
+  if (type === 'browse') showBrowse.value = false
+  if (type === 'edit') showEdit.value = false
+}
+
+const handleOpen = (type: 'desc' | 'browse' | 'edit') => {
+  if (type === 'desc') showDesc.value = true
+  if (type === 'browse') showBrowse.value = true
+  if (type === 'edit') showEdit.value = true
+}
+
+async function getData() {
+  const res = await window.electronApi.getNotes()
+  if (res.code === RESCODE.SUCCESS) {
+    resData.value.noteList = res.data.noteList
+    return res
+  } else {
+    ElMessage(ElmessageConfig(`数据加载失败`, 'error', 1000, true))
+    return new Res('数据加载失败', { noteList: [] }, RESCODE.ERROR)
+  }
+}
+
+onMounted(async ()=>{
+  await getData()
+})
 </script>
 
 <template>
+  <SettingDialog
+    :descView="showDesc"
+    :browseView="showBrowse"
+    :editView="showEdit"
+    :onClose="handleClose"
+    :data="resData"
+  />
   <div class="settingsContainer">
     <el-space style="width: 100%" direction="vertical" fill>
       <el-card>
@@ -82,14 +131,12 @@ const settingStore = useThemeStore()
             <div>
               <span>复制选项</span>
               <el-tooltip placement="top" effect="dark" content="查看说明">
-                <el-icon id="infoFile" @click="() => (instructionView = !instructionView)"
-                  ><InfoFilled
-                /></el-icon>
+                <el-icon id="infoFile" @click="handleOpen('desc')"><InfoFilled /></el-icon>
               </el-tooltip>
             </div>
             <div class="copyButton">
               <el-tooltip placement="top" effect="dark" content="选择复制或导出的内容">
-                <el-button type="default" id="copyChooserButton" @click="() => (isCopy = !isCopy)">
+                <el-button type="default" id="copyChooserButton" @click="handleOpen('browse')">
                   浏览
                 </el-button>
               </el-tooltip>
@@ -115,7 +162,7 @@ const settingStore = useThemeStore()
                 <span>编辑</span>
               </div>
               <div>
-                <el-button type="default" @click="editView = !editView">查看说明</el-button>
+                <el-button type="default" @click="handleOpen('edit')">查看说明</el-button>
               </div>
             </div>
             <div class="item">

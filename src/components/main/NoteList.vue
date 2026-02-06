@@ -36,6 +36,10 @@ watch(
 
 <template>
   <div class="showContainer">
+    <div class="empty">
+      <img v-if="noteList.length === 0" src="../../../public/assets/nodata.png" alt="No Data" />
+      <span>暂无数据</span>
+    </div>
     <div style="margin: 1em 0 1em 0" v-if="isLoading" class="skeleton">
       <el-skeleton
         v-for="i in Math.ceil(400 / 68)"
@@ -195,13 +199,17 @@ watch(
     }
   }
 
-  .emptyContainer {
+  .empty {
     display: flex;
     flex-direction: column;
     position: absolute;
     top: 50%;
     left: 50%;
     translate: -50% -50%;
+
+    & > span{
+      translate: 15%;
+    }
   }
 
   .contentsList {

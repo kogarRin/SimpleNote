@@ -3,7 +3,7 @@ export interface Note {
   title: string
   content: string
   tags: string[]
-  createAt: Date
+  createAt: string
 }
 export interface DbRes {
   noteList: Note[]
