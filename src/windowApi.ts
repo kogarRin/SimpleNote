@@ -14,9 +14,10 @@ export interface ElectronAPI {
   getNotes(): Promise<Res<DbRes>>
   addNotes(): Promise<null>
   deleteNotes(idArray: string[]): Promise<null>
+  outputNotes(title: string, txt: string): Promise<Res<string | null>>
 
   getTheme(): Promise<string>
   setTheme(theme: string): Promise<void>
-  getFont(): Promise<FontDesc>;
-  setFont(font: FontDesc): Promise<void>;
+  getFont(): Promise<FontDesc>
+  setFont(font: FontDesc): Promise<void>
 }

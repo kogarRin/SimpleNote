@@ -2,8 +2,11 @@ export const RESCODE = {
   SUCCESS: 200,
   NOT_FOUND: 404,
 
+  CANCEL: 600,
+
   ERROR: 700,
   PARAM_ERROR: 701,
+
 }
 
 export class Res<T> {

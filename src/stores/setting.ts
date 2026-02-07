@@ -8,7 +8,7 @@ declare const window: Window & {
   electronApi: ElectronAPI
 }
 
-type FontDesc = {
+export type FontDesc = {
   name: string
   en: string
   family: string
@@ -45,9 +45,9 @@ export const useThemeStore = defineStore('theme', () => {
 
   async function initTheme() {
     const theme = await window.electronApi.getTheme()
-    isDark.value = theme === 'dark';
-    appliedFont.value = await window.electronApi.getFont();
-    setFontStyle(appliedFont.value);
+    isDark.value = theme === 'dark'
+    appliedFont.value = await window.electronApi.getFont()
+    setFontStyle(appliedFont.value)
   }
 
   async function shiftTheme(isDarkMode: boolean) {
@@ -56,13 +56,19 @@ export const useThemeStore = defineStore('theme', () => {
   }
 
   function setFontStyle(value: FontDesc) {
-    const font = PRE_FONTS.find(item => item.name === value.name);
+    const font = PRE_FONTS.find((item) => item.name === value.name)
     if (font) {
-      appliedFont.value = font;
-      document.getElementById('base')?.style.setProperty('--font-family', font.family);
+      appliedFont.value = font
+      document.getElementById('base')?.style.setProperty('--font-family', font.family)
     } else {
-      appliedFont.value = { name: '微软雅黑（默认）', en: 'Microsoft Yahei', family: '"Microsoft Yahei", sans-serif'};
-      document.getElementById('base')?.style.setProperty('--font-family', '"Microsoft Yahei", sans-serif');
+      appliedFont.value = {
+        name: '微软雅黑（默认）',
+        en: 'Microsoft Yahei',
+        family: '"Microsoft Yahei", sans-serif',
+      }
+      document
+        .getElementById('base')
+        ?.style.setProperty('--font-family', '"Microsoft Yahei", sans-serif')
     }
   }
 
@@ -75,21 +81,20 @@ export const useThemeStore = defineStore('theme', () => {
         en: value.en,
         family: value.family,
       }
-      await window.electronApi.setFont(payload);
+      await window.electronApi.setFont(payload)
       ElMessage(ElmessageConfig(`已切换为${appliedFont.value.name}`, 'success', 500, true))
     } else {
       setFontStyle({
         name: '微软雅黑（默认）',
         en: 'Microsoft Yahei',
         family: '"Microsoft Yahei", sans-serif"',
-      });
+      })
       await window.electronApi.setFont({
         name: '微软雅黑（默认）',
         en: 'Microsoft Yahei',
         family: '"Microsoft Yahei", sans-serif"',
-      });
+      })
     }
-
   }
 
   return {

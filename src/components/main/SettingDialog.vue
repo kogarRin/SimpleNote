@@ -1,5 +1,13 @@
 <script setup lang="ts">
-import type { DbRes } from '@/ts/class/noteClass.ts'
+import type { DbRes, Note } from '@/ts/class/noteClass.ts'
+import type { ElectronAPI } from '@/windowApi.ts'
+import { RESCODE } from '../../../oth/res.ts'
+import { ElmessageConfig } from '../../../oth/ui.ts'
+import { ElMessage } from 'element-plus'
+
+declare const window: Window & {
+  electronApi: ElectronAPI
+}
 
 const props = defineProps<{
   descView: boolean
@@ -7,12 +15,31 @@ const props = defineProps<{
   editView: boolean
   onClose: (type: 'desc' | 'browse' | 'edit') => void
   data: DbRes
-}>();
+}>()
 
-function perseData(data: DbRes){
-  const list = data.noteList.map((note) => {
-    note.createAt
+function getList(data: DbRes) {
+  return data.noteList.map((note) => {
+    return {
+      title: note.title,
+      content: note.content,
+      createAt: note.createAt.split('-').join('.'),
+    }
   })
+}
+
+async function outputContent(title: string = '无标题', content: string) {
+  try {
+    const res = await window.electronApi.outputNotes(title, content)
+    if (res.code === RESCODE.SUCCESS) {
+      ElMessage(ElmessageConfig(`导出到${res.data}`, 'success', 1000, true));
+      return res;
+    } else if (res.code === RESCODE.CANCEL) {
+      ElMessage(ElmessageConfig(`取消导出`, 'info', 1000, true));
+      return res;
+    }
+  } catch (e) {
+    ElMessage(ElmessageConfig(`导出失败${e}`, 'error', 1000, true));
+  }
 }
 </script>
 
@@ -78,7 +105,7 @@ function perseData(data: DbRes){
     </div>
     <div class="divideLine"></div>
     <div class="noteTable">
-      <el-table :data="props.data.noteList" height="400" :show-overflow-tooltip="true">
+      <el-table :data="getList(props.data)" height="400" :show-overflow-tooltip="true">
         <el-table-column fixed="left" label="标题" prop="title" width="100" />
         <el-table-column label="创建时间" prop="createAt" width="150" />
         <el-table-column label="内容" prop="content" width="450" />
@@ -88,9 +115,7 @@ function perseData(data: DbRes){
           </template>
           <template #default="scope">
             <div class="tableBtn" style="display: flex; justify-content: flex-end">
-              <el-button type="default" size="default" @click="getOutputContent(scope.$index)">
-                导出
-              </el-button>
+              <el-button type="default" size="default" @click="outputContent(scope.row.title, scope.row.content)"> 导出 </el-button>
               <el-button type="primary" size="default" @click="getAndCopyContent(scope.$index)">
                 复制
               </el-button>

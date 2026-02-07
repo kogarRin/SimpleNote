@@ -1,5 +1,5 @@
 // eslint-disable-next-line @typescript-eslint/no-require-imports
-const { contextBridge, ipcRenderer } = require('electron');
+const { contextBridge, ipcRenderer } = require('electron')
 
 contextBridge.exposeInMainWorld('electronApi', {
   //窗口相关
@@ -10,13 +10,14 @@ contextBridge.exposeInMainWorld('electronApi', {
   //笔记相关
   getNotes: () => ipcRenderer.invoke('get-notes'),
   addNotes: () => ipcRenderer.invoke('add-notes'),
-  deleteNotes: (idList) => ipcRenderer.invoke('delete-notes',idList),
+  deleteNotes: (idList) => ipcRenderer.invoke('delete-notes', idList),
+  outputNotes: (title, txt) => ipcRenderer.invoke('output-notes', title, txt),
 
   //主题设置
   getTheme: () => ipcRenderer.invoke('get-theme'),
-  setTheme: (theme) => ipcRenderer.invoke('set-theme',theme),
+  setTheme: (theme) => ipcRenderer.invoke('set-theme', theme),
   getFont: () => ipcRenderer.invoke('get-font'),
-  setFont: (font) => ipcRenderer.invoke('set-font',font),
+  setFont: (font) => ipcRenderer.invoke('set-font', font),
 })
 
-console.log('preload.js loaded');
+console.log('preload.js loaded')

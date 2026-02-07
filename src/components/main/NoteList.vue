@@ -36,8 +36,8 @@ watch(
 
 <template>
   <div class="showContainer">
-    <div class="empty">
-      <img v-if="noteList.length === 0" src="../../../public/assets/nodata.png" alt="No Data" />
+    <div v-if="noteList.length === 0" class="empty">
+      <img src="../../../public/assets/nodata.png" alt="No Data" />
       <span>暂无数据</span>
     </div>
     <div style="margin: 1em 0 1em 0" v-if="isLoading" class="skeleton">
@@ -49,10 +49,6 @@ watch(
         id="skeLine"
         animated
       />
-    </div>
-    <div class="emptyContainer" v-if="!props.noteList">
-      <img src="/public/assets/nodata.png" alt="No Data" />
-      <span>暂无数据</span>
     </div>
     <el-scrollbar>
       <ul style="padding: 0" v-if="props.isEditorModal">
@@ -207,7 +203,7 @@ watch(
     left: 50%;
     translate: -50% -50%;
 
-    & > span{
+    & > span {
       translate: 15%;
     }
   }

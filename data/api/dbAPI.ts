@@ -2,8 +2,6 @@ import { jsonDbToolClass } from '../dbClass/notesClass.ts'
 import type { DbRes } from '../../src/ts/class/noteClass.ts'
 import { Res, RESCODE } from '../../oth/res.ts'
 
-
-
 const dataBase = new jsonDbToolClass()
 
 /**
@@ -11,11 +9,11 @@ const dataBase = new jsonDbToolClass()
  */
 export async function getNotesFromDb(): Promise<Res<DbRes>> {
   try {
-    const res = await dataBase.loadJsonDb();
+    const res = await dataBase.loadJsonDb()
     if (Array.isArray(res.noteList)) {
-      return new Res(`success`, res);
+      return new Res(`success`, res)
     }
-    return new Res(`数据文件损坏`, {noteList: []}, RESCODE.ERROR);
+    return new Res(`数据文件损坏`, { noteList: [] }, RESCODE.ERROR)
   } catch (e) {
     console.log(e)
     return new Res(`error`, { noteList: [] }, RESCODE.ERROR)
@@ -27,7 +25,7 @@ export async function getNotesFromDb(): Promise<Res<DbRes>> {
  */
 export async function addNote(): Promise<Res<null>> {
   try {
-    await dataBase.addNoteJson();
+    await dataBase.addNoteJson()
     return new Res(`添加成功`, null)
   } catch (e) {
     console.log(e)
