@@ -34,12 +34,12 @@ export const useThemeStore = defineStore('theme', () => {
 
   watch(isDark, (val) => {
     const base = document.getElementById('base')
-    if (!base) return
+    if (!base) return;
 
     if (val) {
-      document.getElementById('base')?.classList.add('dark')
+      document.getElementById('base')?.classList.add('dark');
     } else {
-      base.classList.remove('dark')
+      base.classList.remove('dark');
     }
   })
 

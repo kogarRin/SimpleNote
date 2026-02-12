@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import type { Note } from '@/ts/class/noteClass.ts'
+import { useRouter } from 'vue-router'
 
 const selectedIdList = ref<string[]>([])
 const isLoading = ref(false)
+const router = useRouter()
 
 const props = defineProps<{
   noteList: Note[]
@@ -22,6 +24,11 @@ function toEdit(noteId: string) {
     } else {
       selectedIdList.value.push(noteId)
     }
+  } else {
+    router.push({
+      name: 'showNote',
+      params: { id: noteId },
+    })
   }
 }
 

@@ -37,10 +37,11 @@ const handleWindow: Record<clickType, () => Promise<void>> = {
         active-text-color="#1f2024"
         background-color="5881A39B"
         :ellipsis="false"
+        :default-active="$route.path"
       >
-        <el-menu-item index="home" route="/"> 首页 </el-menu-item>
-        <el-menu-item index="tools" route="/tools"> 工具 </el-menu-item>
-        <el-menu-item index="setting" route="/settings"> 设置 </el-menu-item>
+        <el-menu-item index="home"> 首页 </el-menu-item>
+        <el-menu-item index="tools"> 工具 </el-menu-item>
+        <el-menu-item index="settings"> 设置 </el-menu-item>
       </el-menu>
     </div>
 

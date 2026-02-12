@@ -12,8 +12,8 @@ let win: BrowserWindow
 
 function createWindow(): void {
   win = new BrowserWindow({
-    minWidth: 1200,
-    minHeight: 750,
+    minWidth: 800,
+    minHeight: 600,
     icon: path.join(__dirname, '../public/assets/icon/icon.ico'),
     frame: false,
     webPreferences: {

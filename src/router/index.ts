@@ -3,8 +3,12 @@ import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
 const routes: RouteRecordRaw[] = [
   {
     path: '/',
+    redirect: '/home',
+  },
+  {
+    path: '/home',
     name: 'home',
-    component: () => import('../components/basicView/Home.vue'),
+    component: () => import('@/components/basicView/Home.vue'),
   },
   // {
   //   path: '/tools',
@@ -12,7 +16,7 @@ const routes: RouteRecordRaw[] = [
   //   component: () => import('../components/tools/Tools.vue'),
   // },
   // {
-  //   path: '/edit/:id',
+  //   path: '/edit?id',
   //   name: 'edit',
   //   component: () => import('../components/editAndShow/Edit.vue'),
   // },
@@ -21,12 +25,12 @@ const routes: RouteRecordRaw[] = [
     name: 'settings',
     component: () => import('../components/main/Setting.vue'),
   },
-  // {
-  //   path: '/showNote/:id',
-  //   name: 'showNote',
-  //   props: true,
-  //   component: () => import('../components/editAndShow/showForm.vue'),
-  // },
+  {
+    path: '/showNote/:id',
+    name: 'showNote',
+    props: true,
+    component: () => import('../components/main/NoteContent.vue'),
+  },
 ]
 const router = createRouter({
   history: createWebHistory(),

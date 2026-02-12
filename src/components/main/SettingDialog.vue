@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { DbRes, Note } from '@/ts/class/noteClass.ts'
+import type { DbRes } from '@/ts/class/noteClass.ts'
 import type { ElectronAPI } from '@/windowApi.ts'
 import { RESCODE } from '../../../oth/res.ts'
 import { ElmessageConfig } from '../../../oth/ui.ts'
@@ -31,14 +31,14 @@ async function outputContent(title: string = '无标题', content: string) {
   try {
     const res = await window.electronApi.outputNotes(title, content)
     if (res.code === RESCODE.SUCCESS) {
-      ElMessage(ElmessageConfig(`导出到${res.data}`, 'success', 1000, true));
-      return res;
+      ElMessage(ElmessageConfig(`已保存至${res.data}`, 'success', 1500, true))
+      return res
     } else if (res.code === RESCODE.CANCEL) {
-      ElMessage(ElmessageConfig(`取消导出`, 'info', 1000, true));
-      return res;
+      ElMessage(ElmessageConfig(`取消导出`, 'info', 1500, true))
+      return res
     }
   } catch (e) {
-    ElMessage(ElmessageConfig(`导出失败${e}`, 'error', 1000, true));
+    ElMessage(ElmessageConfig(`导出失败${e}`, 'error', 1500, true))
   }
 }
 </script>
@@ -115,7 +115,13 @@ async function outputContent(title: string = '无标题', content: string) {
           </template>
           <template #default="scope">
             <div class="tableBtn" style="display: flex; justify-content: flex-end">
-              <el-button type="default" size="default" @click="outputContent(scope.row.title, scope.row.content)"> 导出 </el-button>
+              <el-button
+                type="default"
+                size="default"
+                @click="outputContent(scope.row.title, scope.row.content)"
+              >
+                导出
+              </el-button>
               <el-button type="primary" size="default" @click="getAndCopyContent(scope.$index)">
                 复制
               </el-button>
