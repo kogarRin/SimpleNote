@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { Delete, Refresh, Search } from '@element-plus/icons-vue'
 import type { Note } from '@/ts/class/noteClass.ts'
 import { ElMessage } from 'element-plus'

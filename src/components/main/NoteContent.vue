@@ -25,6 +25,7 @@ onMounted(async () => {
   spanList.value = await getNote(route.params.id as string).then((note) =>
     note?.content.split('\n'),
   )
+  console.log(route.params.id)
   note.value = await getNote(route.params.id as string)
 })
 </script>

@@ -39,9 +39,9 @@ const handleWindow: Record<clickType, () => Promise<void>> = {
         :ellipsis="false"
         :default-active="$route.path"
       >
-        <el-menu-item index="home"> 首页 </el-menu-item>
-        <el-menu-item index="tools"> 工具 </el-menu-item>
-        <el-menu-item index="settings"> 设置 </el-menu-item>
+        <el-menu-item index="/home"> 首页 </el-menu-item>
+        <el-menu-item index="/tools"> 工具 </el-menu-item>
+        <el-menu-item index="/settings"> 设置 </el-menu-item>
       </el-menu>
     </div>
 
