@@ -112,7 +112,7 @@ watch(
                   </div>
                   <div>
                     <span>创建于</span>
-                    <span>{{}}</span>
+                    <span>{{ eachNote.createAt }}</span>
                   </div>
                 </div>
               </div>
@@ -171,8 +171,8 @@ watch(
                   >
                 </div>
                 <div>
-                  <span>创建于</span>
-                  <span>{{}}</span>
+                  <span style="margin-right: 5px">创建于</span>
+                  <span>{{eachNote.createAt.split('-').join('.')}}</span>
                 </div>
               </div>
             </div>

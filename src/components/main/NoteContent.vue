@@ -11,18 +11,21 @@ declare const window: Window & {
 
 const route = useRoute()
 const router = useRouter()
-const note = ref<Note>()
+const note = ref<Note | null>()
 const spanList = ref<string[]>()
 
-async function getNote(id: string): Promise<string[] | undefined> {
+async function getNote(id: string) {
   const res = await window.electronApi.getNotes()
-  const item = res.data.noteList?.find((note: Note) => note.id === id)
-  note.value = item
-  return item?.content.split('\n')
+  return res.data.noteList?.find((note: Note) => note.id === id) === undefined
+    ? null
+    : res.data.noteList?.find((note: Note) => note.id === id)
 }
 
 onMounted(async () => {
-  spanList.value = await getNote(route.params.id as string)
+  spanList.value = await getNote(route.params.id as string).then((note) =>
+    note?.content.split('\n'),
+  )
+  note.value = await getNote(route.params.id as string)
 })
 </script>
 
@@ -44,13 +47,21 @@ onMounted(async () => {
             >
               <el-icon><Back /></el-icon>
             </el-button>
-            <el-button type="primary"> 编辑 </el-button>
+            <el-button
+              type="primary"
+              @click="
+                () => {
+                  router.push({ name: 'edit', params: { id: note!.id } })
+                }
+              "
+              >编辑</el-button
+            >
           </div>
         </div>
       </template>
       <div class="card-content">
         <el-scrollbar>
-          <p v-for="(item, index) in spanList" :key="index" style="text-indent: 2em; margin: 10px">
+          <p v-for="(item, index) in spanList" :key="index" style="text-indent: 2em; margin: 6px">
             {{ item }}
           </p>
         </el-scrollbar>
@@ -62,8 +73,8 @@ onMounted(async () => {
 <style scoped lang="scss">
 .container {
   width: 100%;
-  height: calc(100vh - 90px);
-  padding: 20px;
+  height: calc(100vh - 70px);
+  padding: 10px;
 }
 
 .card-container {
