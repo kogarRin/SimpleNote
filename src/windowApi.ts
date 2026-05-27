@@ -3,7 +3,7 @@
  */
 
 import type { Res } from '../oth/res.ts'
-import type { DbRes } from '@/ts/class/noteClass.ts'
+import type { DbRes, Note } from '@/ts/class/noteClass.ts'
 import type { FontDesc } from '@/stores/setting.ts'
 
 export interface ElectronAPI {
@@ -15,6 +15,7 @@ export interface ElectronAPI {
   addNotes(): Promise<null>
   deleteNotes(idArray: string[]): Promise<null>
   outputNotes(title: string, txt: string): Promise<Res<string | null>>
+  updateNote(note: Note): Promise<Res<null>>
 
   getTheme(): Promise<string>
   setTheme(theme: string): Promise<void>

@@ -12,6 +12,7 @@ contextBridge.exposeInMainWorld('electronApi', {
   addNotes: () => ipcRenderer.invoke('add-notes'),
   deleteNotes: (idList) => ipcRenderer.invoke('delete-notes', idList),
   outputNotes: (title, txt) => ipcRenderer.invoke('output-notes', title, txt),
+  updateNote: (note) => ipcRenderer.invoke('update-note', note),
 
   //主题设置
   getTheme: () => ipcRenderer.invoke('get-theme'),

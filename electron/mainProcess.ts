@@ -1,7 +1,7 @@
 import { app, BrowserWindow, ipcMain, dialog } from 'electron'
 import * as path from 'node:path'
 import { fileURLToPath } from 'url'
-import { addNote, deleteNote, getNotesFromDb } from '../data/api/dbAPI.ts'
+import { dataApi } from '../data/api/dbAPI.ts'
 import Store from 'electron-store'
 import * as fs from 'node:fs'
 
@@ -60,15 +60,19 @@ ipcMain.handle('close-window', () => {
  * 笔记相关
  */
 ipcMain.handle('get-notes', async () => {
-  return await getNotesFromDb()
+  return await dataApi.getNotesFromDb()
 })
 
 ipcMain.handle('add-notes', async () => {
-  await addNote()
+  await dataApi.addNote()
 })
 
 ipcMain.handle('delete-notes', async (_, idList: string[]) => {
-  await deleteNote(idList)
+  await dataApi.deleteNote(idList)
+})
+
+ipcMain.handle('update-note', async (_, note) => {
+  await dataApi.updateNote(note)
 })
 
 /**

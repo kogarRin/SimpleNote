@@ -52,7 +52,7 @@ export class jsonDbToolClass {
     })
     try {
       await this.jsonDb.read()
-      this.jsonDb.data.noteList.push(emptyNoteType());
+      this.jsonDb.data.noteList.push(emptyNoteType())
       await this.jsonDb.write()
       return null
     } catch (err) {
