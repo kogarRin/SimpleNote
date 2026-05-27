@@ -16,19 +16,34 @@ const emits = defineEmits<{
   select: [idList: string[]]
 }>()
 
-function toEdit(noteId: string) {
-  if (props.isEditorModal) {
-    const index = selectedIdList.value.indexOf(noteId)
-    if (index > -1) {
-      selectedIdList.value.splice(index, 1)
-    } else {
-      selectedIdList.value.push(noteId)
-    }
+function selectAll() {
+  selectedIdList.value = props.noteList.map((n) => n.id)
+}
+
+function clearSelection() {
+  selectedIdList.value = []
+}
+
+defineExpose({ selectAll, clearSelection, selectedIdList })
+
+function toggleSelect(noteId: string) {
+  const index = selectedIdList.value.indexOf(noteId)
+  if (index > -1) {
+    selectedIdList.value.splice(index, 1)
   } else {
-    router.push({
-      name: 'showNote',
-      params: { id: noteId },
-    })
+    selectedIdList.value.push(noteId)
+  }
+}
+
+function openNote(noteId: string) {
+  router.push({ name: 'showNote', params: { id: noteId } })
+}
+
+function onCardClick(noteId: string) {
+  if (props.isEditorModal) {
+    toggleSelect(noteId)
+  } else {
+    openNote(noteId)
   }
 }
 
@@ -42,138 +57,70 @@ watch(
 </script>
 
 <template>
-  <div class="showContainer">
-    <div v-if="noteList.length === 0" class="empty">
-      <img src="../../../public/assets/nodata.png" alt="No Data" />
-      <span>暂无数据</span>
+  <div class="note-list">
+    <!-- 空状态 -->
+    <div v-if="noteList.length === 0 && !isLoading" class="empty-state">
+      <div class="empty-icon">
+        <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="14" y="10" width="52" height="60" rx="4" stroke="currentColor" stroke-width="2.5" />
+          <line x1="22" y1="24" x2="50" y2="24" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+          <line x1="22" y1="34" x2="58" y2="34" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+          <line x1="22" y1="44" x2="44" y2="44" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+        </svg>
+      </div>
+      <p class="empty-text">还没有笔记</p>
+      <p class="empty-desc">点击"新建笔记"开始记录</p>
     </div>
-    <div style="margin: 1em 0 1em 0" v-if="isLoading" class="skeleton">
-      <el-skeleton
-        v-for="i in Math.ceil(400 / 68)"
-        :key="i"
-        variant="text"
-        :rows="1"
-        id="skeLine"
-        animated
-      />
+
+    <!-- 骨架屏 -->
+    <div v-if="isLoading" class="skeleton-list">
+      <div v-for="i in 5" :key="i" class="skeleton-card">
+        <el-skeleton animated>
+          <template #template>
+            <div class="sk-header">
+              <el-skeleton-item variant="text" style="width: 60%; height: 20px" />
+            </div>
+            <div class="sk-body">
+              <el-skeleton-item variant="text" style="width: 100%; height: 14px" />
+              <el-skeleton-item variant="text" style="width: 75%; height: 14px" />
+            </div>
+            <div class="sk-footer">
+              <el-skeleton-item variant="text" style="width: 30%; height: 12px" />
+            </div>
+          </template>
+        </el-skeleton>
+      </div>
     </div>
-    <el-scrollbar>
-      <ul style="padding: 0" v-if="props.isEditorModal">
+
+    <!-- 笔记列表 -->
+    <el-scrollbar v-if="noteList.length > 0" class="scroll-area">
+      <ul class="card-list">
         <li
-          style="list-style-type: none"
-          v-for="eachNote in props.noteList"
-          :key="eachNote.id"
-          class="contentsList"
+          v-for="note in props.noteList"
+          :key="note.id"
+          class="card-item"
+          :class="{ selected: selectedIdList.includes(note.id) }"
         >
-          <div style="display: flex; align-items: center; width: 100%">
+          <div class="card-wrapper">
             <el-checkbox
               v-if="props.isEditorModal"
-              type="checkbox"
-              v-model="selectedIdList"
-              :value="eachNote.id"
+              :model-value="selectedIdList.includes(note.id)"
+              class="card-check"
               @click.stop
+              @change="toggleSelect(note.id)"
             />
-            <div class="noteContainer" @click="toEdit(eachNote.id)">
-              <div class="noteInfoContain">
-                <div class="contentTitle">
-                  <span>
-                    <b>{{ eachNote.title }}</b>
-                  </span>
-                </div>
-                <div class="noteContent">
-                  <div>
-                    <span>
-                      {{
-                        eachNote.content
-                          ? `${eachNote.content.trim().slice(0, 32)}......`
-                          : '暂无内容'
-                      }}
-                    </span>
-                  </div>
-                  <div>
-                    <!--                  <el-tag-->
-                    <!--                    v-for="tag in eachNote.tags.length > 6-->
-                    <!--                      ? eachNote.tags.slice(0, 6)-->
-                    <!--                      : eachNote.tags"-->
-                    <!--                    style="margin: 0 5px"-->
-                    <!--                  >-->
-                    <!--                    {{ eachNote.tags.length < 6 ? tag : tag + '...' }}-->
-                    <!--                  </el-tag>-->
-                  </div>
-                </div>
-                <div class="detailInfo">
-                  <div>
-                    <span
-                      >共<span style="padding: 0 0.2em">{{
-                        eachNote.content ? eachNote.content.trim().length : 0
-                      }}</span
-                      >字</span
-                    >
-                  </div>
-                  <div>
-                    <span>创建于</span>
-                    <span>{{ eachNote.createAt }}</span>
-                  </div>
-                </div>
+            <div class="card" @click="onCardClick(note.id)">
+              <div class="card-header">
+                <h3 class="card-title">{{ note.title }}</h3>
+                <span class="card-date">{{ note.createAt.split('-').join('.') }}</span>
               </div>
-            </div>
-          </div>
-        </li>
-      </ul>
-      <ul style="padding: 0" v-else>
-        <li
-          style="list-style-type: none"
-          v-for="eachNote in props.noteList"
-          :key="eachNote.id"
-          class="contentsList"
-        >
-          <el-checkbox
-            v-if="props.isEditorModal"
-            type="checkbox"
-            v-model="selectedIdList"
-            :value="eachNote.id"
-          />
-          <div class="noteContainer" @click="toEdit(eachNote.id)">
-            <div class="noteInfoContain">
-              <div class="contentTitle">
-                <span>
-                  <b>{{ eachNote.title }}</b>
+              <p class="card-preview">
+                {{ note.content ? note.content.trim().slice(0, 80) : '暂无内容' }}
+              </p>
+              <div class="card-footer">
+                <span class="card-count">
+                  {{ note.content ? note.content.trim().length : 0 }} 字
                 </span>
-              </div>
-              <div class="noteContent">
-                <div class="noteContentContain">
-                  <span>
-                    {{
-                      eachNote.content
-                        ? `${eachNote.content.trim().slice(0, 32)}......`
-                        : '暂无内容'
-                    }}
-                  </span>
-                </div>
-                <div class="tagsContain">
-                  <!--                  <el-tag-->
-                  <!--                    v-for="tag in eachNote.tags.length > 6-->
-                  <!--                      ? eachNote.tags.slice(0, 6)-->
-                  <!--                      : eachNote.tags"-->
-                  <!--                    style="margin: 0 5px"-->
-                  <!--                  >-->
-                  <!--                    {{ eachNote.tags.length < 6 ? tag : tag + '...' }}-->
-                  <!--                  </el-tag>-->
-                </div>
-              </div>
-              <div class="detailInfo">
-                <div>
-                  <span
-                    >共<span style="padding: 0 0.2em">{{
-                      eachNote.content ? eachNote.content.trim().length : 0
-                    }}</span
-                    >字</span
-                  >
-                </div>
-                <div>
-                  <span style="margin-right: 5px">创建于</span>
-                  <span>{{eachNote.createAt.split('-').join('.')}}</span>
-                </div>
               </div>
             </div>
           </div>
@@ -184,83 +131,173 @@ watch(
 </template>
 
 <style scoped lang="scss">
-.showContainer {
-  position: relative;
-  height: 90%;
-  border-radius: 0.5em;
+.note-list {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
 
-  .skeleton {
-    padding: 1em 0 0 0.5em;
-    position: absolute;
-    width: 94%;
-    left: 1%;
+// ========== 空状态 ==========
+.empty-state {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: var(--el-text-color-disabled);
+  user-select: none;
 
-    #skeLine {
-      display: grid;
-      grid-template-columns: 1fr;
-      margin-bottom: 1em;
-    }
+  .empty-icon {
+    width: 80px;
+    height: 80px;
+    opacity: 0.4;
+    margin-bottom: 8px;
   }
 
-  .empty {
+  .empty-text {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--el-text-color-secondary);
+    margin: 0;
+  }
+
+  .empty-desc {
+    font-size: 13px;
+    margin: 0;
+  }
+}
+
+// ========== 骨架屏 ==========
+.skeleton-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.skeleton-card {
+  padding: 16px 20px;
+  border-radius: 10px;
+  background: var(--el-fill-color-light);
+  border: 1px solid var(--el-border-color-lighter);
+
+  .sk-header {
+    margin-bottom: 12px;
+  }
+
+  .sk-body {
     display: flex;
     flex-direction: column;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    translate: -50% -50%;
-
-    & > span {
-      translate: 15%;
-    }
+    gap: 6px;
+    margin-bottom: 12px;
   }
 
-  .contentsList {
+  .sk-footer {
+    width: 100%;
+  }
+}
+
+// ========== 滚动区域 ==========
+.scroll-area {
+  flex: 1;
+  height: 100%;
+}
+
+// ========== 卡片列表 ==========
+.card-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.card-item {
+  border-radius: 10px;
+  transition: background 0.2s;
+
+  &.selected {
+    background: var(--el-color-primary-light-9);
+  }
+
+  .card-wrapper {
     display: flex;
+    align-items: stretch;
+  }
+}
 
-    &:hover {
-      opacity: 0.75;
-    }
+.card-check {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  padding: 0 12px 0 4px;
+}
 
-    .noteContainer {
-      width: 100%;
+.card {
+  flex: 1;
+  padding: 14px 18px;
+  border-radius: 10px;
+  border: 1px solid var(--el-border-color-lighter);
+  background: var(--el-bg-color);
+  cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s, transform 0.15s;
+  min-width: 0;
 
-      .noteInfoContain {
-        display: flex;
-        flex-direction: column;
-        text-align: left;
-        margin: 0 0.6em 1em 0.6em;
-        border: solid rgba(109, 127, 145, 0.45) 2px;
-        border-radius: 0.2em;
+  &:hover {
+    border-color: var(--el-color-primary-light-5);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+    transform: translateY(-1px);
+  }
 
-        &:hover {
-          box-shadow: 0 0 10px rgba(149, 183, 209, 0.68);
-          cursor: pointer;
-        }
+  &:active {
+    transform: translateY(0);
+  }
+}
 
-        .contentTitle {
-          margin: 0.8em 0.8em 0 0.8em;
-          user-select: none;
-        }
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 6px;
 
-        .noteContent {
-          display: flex;
-          margin: 0 0.8em 0 0.8em;
-          user-select: none;
-          flex-direction: row;
-          justify-content: space-between;
-        }
+  .card-title {
+    font-size: 15px;
+    font-weight: 600;
+    margin: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex: 1;
+    min-width: 0;
+  }
 
-        .detailInfo {
-          display: flex;
-          margin: 0.5em 0.8em 0.5em 0.8em;
+  .card-date {
+    font-size: 12px;
+    color: var(--el-text-color-placeholder);
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+}
 
-          div {
-            margin: 0 0.5em 0 0;
-          }
-        }
-      }
-    }
+.card-preview {
+  margin: 0 0 8px;
+  font-size: 13px;
+  color: var(--el-text-color-regular);
+  line-height: 1.5;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.card-footer {
+  display: flex;
+  align-items: center;
+
+  .card-count {
+    font-size: 12px;
+    color: var(--el-text-color-placeholder);
   }
 }
 </style>

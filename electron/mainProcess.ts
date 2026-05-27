@@ -64,15 +64,15 @@ ipcMain.handle('get-notes', async () => {
 })
 
 ipcMain.handle('add-notes', async () => {
-  await dataApi.addNote()
+  return await dataApi.addNote()
 })
 
 ipcMain.handle('delete-notes', async (_, idList: string[]) => {
-  await dataApi.deleteNote(idList)
+  return await dataApi.deleteNote(idList)
 })
 
 ipcMain.handle('update-note', async (_, note) => {
-  await dataApi.updateNote(note)
+  return await dataApi.updateNote(note)
 })
 
 /**

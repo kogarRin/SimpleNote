@@ -1,65 +1,65 @@
 import { jsonDbToolClass } from '../dbClass/notesClass.ts'
-import type { DbRes } from '../../src/ts/class/noteClass.ts'
+import type { DbRes, Note } from '../../src/ts/class/noteClass.ts'
 import { Res, RESCODE } from '../../oth/res.ts'
 
 const dataBase = new jsonDbToolClass()
 
 export const dataApi = {
   /**
-   * @function getNotesFromDb 获取笔记列表
+   * 获取笔记列表
    */
   getNotesFromDb: async (): Promise<Res<DbRes>> => {
     try {
       const res = await dataBase.loadJsonDb()
       if (Array.isArray(res.noteList)) {
-        return new Res(`success`, res)
+        return new Res('success', res)
       }
-      return new Res(`数据文件损坏`, { noteList: [] }, RESCODE.ERROR)
+      return new Res('数据文件损坏', { noteList: [] }, RESCODE.ERROR)
     } catch (e) {
       console.log(e)
-      return new Res(`error`, { noteList: [] }, RESCODE.ERROR)
+      return new Res('error', { noteList: [] }, RESCODE.ERROR)
     }
   },
 
   /**
-   * @function addNote 添加笔记
+   * 添加笔记
    */
   addNote: async (): Promise<Res<null>> => {
     try {
       await dataBase.addNoteJson()
-      return new Res(`添加成功`, null)
+      return new Res('添加成功', null)
     } catch (e) {
       console.log(e)
-      return new Res(`添加失败`, null, RESCODE.ERROR)
+      return new Res('添加失败', null, RESCODE.ERROR)
     }
   },
 
   /**
-   * @function deleteNote 删除笔记
+   * 删除笔记
    */
-  deleteNote: async (idList: string[]) => {
+  deleteNote: async (idList: string[]): Promise<Res<null>> => {
     try {
-      if (!Array.isArray(idList)) {
-        return new Res(`参数错误`, null, RESCODE.PARAM_ERROR)
+      if (!Array.isArray(idList) || idList.length === 0) {
+        return new Res('参数错误', null, RESCODE.PARAM_ERROR)
       }
       await dataBase.deleteNoteJson(idList)
-      return new Res(`删除成功`, null, RESCODE.SUCCESS)
+      return new Res('删除成功', null)
     } catch (e) {
       console.log(e)
-      return new Res(`删除失败,发生错误`, null, RESCODE.ERROR)
+      return new Res('删除失败', null, RESCODE.ERROR)
     }
   },
 
   /**
-   * @function updateNote 更新记录
+   * 更新笔记
    */
-  updateNote: async(note)=>{
+  updateNote: async (note: Note): Promise<Res<null>> => {
     try {
-      await dataBase.updateNoteJson(note);
-      return new Res('保存成功', null, RESCODE.SUCCESS)
+      await dataBase.updateNoteJson(note)
+      return new Res('保存成功', null)
     } catch (e) {
       console.log(e)
-      return new Res(`删除失败,发生错误`, null, RESCODE.ERROR)
+      return new Res('保存失败', null, RESCODE.ERROR)
     }
-  }
+  },
 }
