@@ -135,6 +135,7 @@ watch(
   height: 100%;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
 // ========== 空状态 ==========
@@ -200,7 +201,7 @@ watch(
 // ========== 滚动区域 ==========
 .scroll-area {
   flex: 1;
-  height: 100%;
+  min-height: 0;
 }
 
 // ========== 卡片列表 ==========
@@ -236,22 +237,17 @@ watch(
 
 .card {
   flex: 1;
-  padding: 14px 18px;
+  padding: 12px 14px;
   border-radius: 10px;
   border: 1px solid var(--el-border-color-lighter);
   background: var(--el-bg-color);
   cursor: pointer;
-  transition: border-color 0.2s, box-shadow 0.2s, transform 0.15s;
+  transition: border-color 0.2s, box-shadow 0.2s;
   min-width: 0;
 
   &:hover {
     border-color: var(--el-color-primary-light-5);
     box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
-    transform: translateY(-1px);
-  }
-
-  &:active {
-    transform: translateY(0);
   }
 }
 
@@ -298,6 +294,36 @@ watch(
   .card-count {
     font-size: 12px;
     color: var(--el-text-color-placeholder);
+  }
+}
+
+// ========== 窄屏适配 ==========
+@media (max-width: 520px) {
+  .card {
+    padding: 10px 12px;
+  }
+
+  .card-header .card-title {
+    font-size: 14px;
+  }
+
+  .card-preview {
+    font-size: 12px;
+  }
+
+  .card-check {
+    padding: 0 8px 0 2px;
+  }
+}
+
+@media (max-width: 380px) {
+  .card-header {
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .card-header .card-date {
+    font-size: 11px;
   }
 }
 </style>

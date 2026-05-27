@@ -56,9 +56,6 @@ async function initNotes(model: number) {
   }
 }
 
-async function refreshNoteList() {
-  await initNotes(2)
-}
 
 async function addOneNote() {
   await window.electronApi.addNotes()
@@ -229,10 +226,11 @@ onMounted(async () => {
   display: flex;
   flex-direction: column;
   height: calc(100vh - 50px);
-  padding: 0 24px;
+  padding: 0 16px;
   max-width: 900px;
   margin: 0 auto;
   width: 100%;
+  min-width: 0;
 }
 
 // ========== 对话框 ==========
@@ -285,14 +283,18 @@ onMounted(async () => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px 0 16px;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 16px 0 12px;
   flex-shrink: 0;
 }
 
 .toolbar-left {
+  flex-shrink: 0;
+
   .stats {
     .stat-item {
-      font-size: 14px;
+      font-size: 13px;
       color: var(--el-text-color-secondary);
 
       strong {
@@ -310,13 +312,15 @@ onMounted(async () => {
 .toolbar-right {
   display: flex;
   align-items: center;
-  gap: 8px;
+  flex-wrap: wrap;
+  gap: 6px;
+  flex-shrink: 0;
 }
 
 // ========== 搜索栏 ==========
 .search-bar {
   flex-shrink: 0;
-  padding-bottom: 20px;
+  padding-bottom: 14px;
 
   .search-input {
     :deep(.el-input__wrapper) {
@@ -349,7 +353,7 @@ onMounted(async () => {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 0 4px 12px;
+  padding: 0 4px 10px;
   flex-shrink: 0;
 
   .selected-hint {
@@ -361,7 +365,56 @@ onMounted(async () => {
 // ========== 列表区域 ==========
 .list-area {
   flex: 1;
+  min-height: 0;
   overflow: hidden;
-  padding-bottom: 16px;
+  padding-bottom: 12px;
+}
+
+// ========== 窄屏适配 ==========
+@media (max-width: 520px) {
+  .home {
+    padding: 0 10px;
+  }
+
+  .toolbar {
+    padding: 10px 0 8px;
+    gap: 6px;
+  }
+
+  .toolbar-left .stats .stat-item {
+    font-size: 12px;
+  }
+
+  .toolbar-right :deep(.el-button) {
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+
+  .search-bar {
+    padding-bottom: 10px;
+  }
+
+  .select-bar {
+    padding-bottom: 8px;
+  }
+}
+
+@media (max-width: 380px) {
+  .toolbar-right {
+    gap: 4px;
+
+    :deep(.el-button) {
+      padding: 5px 8px;
+      font-size: 12px;
+    }
+  }
+
+  .toolbar-left .stats .stat-item {
+    font-size: 11px;
+  }
+
+  .dialog-header .dialog-title {
+    font-size: 14px;
+  }
 }
 </style>
